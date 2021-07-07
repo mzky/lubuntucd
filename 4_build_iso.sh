@@ -1,65 +1,65 @@
 #!/bin/bash
-# Author£ºLate Lee<li@latelee.org>
-# ÓÃ·¨£º./4_build_iso.sh
-# ±¾½Å±¾±ØĞëÔÚÄ¿Â¼isoÖĞÖ´ĞĞ£¬isoÄ¿Â¼ÓĞnewiso¡¢squashfs-rootÄ¿Â¼
-# ÏÂÃæµÄISO_IDRºÍROOTFS±ØĞë±£³ÖÓë1_tar_iso.sh½Å±¾ÖĞµÄÒ»ÖÂ
+# Authorï¼šLate Lee<li@latelee.org>
+# ç”¨æ³•ï¼š./4_build_iso.sh
+# æœ¬è„šæœ¬å¿…é¡»åœ¨ç›®å½•isoä¸­æ‰§è¡Œï¼Œisoç›®å½•æœ‰newisoã€squashfs-rootç›®å½•
+# ä¸‹é¢çš„ISO_IDRå’ŒROOTFSå¿…é¡»ä¿æŒä¸1_tar_iso.shè„šæœ¬ä¸­çš„ä¸€è‡´
 
-# ¹âÅÌ½âÑ¹ºóµÄÄ¿Â¼
+# å…‰ç›˜è§£å‹åçš„ç›®å½•
 ISO_IDR=$PWD/newiso
-# ½âÑ¹squashfsµÄÄ¿Â¼
+# è§£å‹squashfsçš„ç›®å½•
 ROOTFS=$PWD/squashfs-root
 
-# ×îºóÉú³ÉµÄ¾µÏñµÄÃû³Æ£¬¼´ÎÒÃÇÆô¶¯¡¢ÉÕĞ´ËùÓÃµÄiso¾µÏñ
-ISO_NAME=$PWD/lubuntu-16.04.3-desktop-amd64-KXS.iso
+# æœ€åç”Ÿæˆçš„é•œåƒçš„åç§°ï¼Œå³æˆ‘ä»¬å¯åŠ¨ã€çƒ§å†™æ‰€ç”¨çš„isoé•œåƒ
+ISO_NAME=$PWD/tos.iso
 
-# xorriso±ØĞëÒÀÀµ´ËÎÄ¼ş£¬·ñÔòÉÕĞ´UÅÌÏµÍ³»áÎŞ·¨Æô¶¯
+# xorrisoå¿…é¡»ä¾èµ–æ­¤æ–‡ä»¶ï¼Œå¦åˆ™çƒ§å†™Uç›˜ç³»ç»Ÿä¼šæ— æ³•å¯åŠ¨
 ISOHDPFX_FILE=$PWD/work/isolinux/isohdpfx.bin
 
 #################################################################
-# »Ö¸´resolv.confµÄÔ­Ê¼Öµ
+# æ¢å¤resolv.confçš„åŸå§‹å€¼
 echo "" > $ROOTFS/etc/resolv.conf
 
-# ´´½¨myversionÒÔ¼ÇÂ¼ĞÅÏ¢£¬´ËÎÄ¼ş¿ÉÒÔÉ¾³ı
+# åˆ›å»ºmyversionä»¥è®°å½•ä¿¡æ¯ï¼Œæ­¤æ–‡ä»¶å¯ä»¥åˆ é™¤
 echo "Lubuntu by Late Lee<li@latelee.org>" > squashfs-root/etc/myversion
 date >> squashfs-root/etc/myversion
 
-# É¾³ıurandomÎÄ¼ş
+# åˆ é™¤urandomæ–‡ä»¶
 rm -rf squashfs-root/dev/urandom
 
-# ÏÂÃæµÄÃüÁîÔ­°æ´ÓubuntuµÄwiki»ñÈ¡£¬²¢ÉÔÓĞĞŞ¸Ä
-# >>>>>>>>>>>>>>>>>>>>> ¿ªÊ¼
-chmod +w $ISO_IDR/casper/filesystem.manifest
-# ÏµÍ³°²×°µÄÈí¼ş°üĞÅÏ¢
+# ä¸‹é¢çš„å‘½ä»¤åŸç‰ˆä»ubuntuçš„wikiè·å–ï¼Œå¹¶ç¨æœ‰ä¿®æ”¹
+# >>>>>>>>>>>>>>>>>>>>> å¼€å§‹
+chmod +w $ISO_IDR/live/filesystem.manifest
+# ç³»ç»Ÿå®‰è£…çš„è½¯ä»¶åŒ…ä¿¡æ¯
 # 
 cp /usr/bin/dpkg-query $ROOTFS/usr/bin/
-chroot $ROOTFS dpkg-query -W --showformat='${Package} ${Version}\n' > $ISO_IDR/casper/filesystem.manifest
-cp $ISO_IDR/casper/filesystem.manifest $ISO_IDR/casper/filesystem.manifest-desktop
-sed -i '/ubiquity/d' $ISO_IDR/casper/filesystem.manifest-desktop
-sed -i '/casper/d' $ISO_IDR/casper/filesystem.manifest-desktop
+chroot $ROOTFS dpkg-query -W --showformat='${Package} ${Version}\n' > $ISO_IDR/live/filesystem.manifest
+cp $ISO_IDR/live/filesystem.manifest $ISO_IDR/live/filesystem.manifest-desktop
+sed -i '/ubiquity/d' $ISO_IDR/live/filesystem.manifest
+sed -i '/live/d' $ISO_IDR/live/filesystem.manifest
 
-# ¿ªÊ¼Ñ¹Ëõ
-rm -rf  $ISO_IDR/casper/filesystem.squashfs
+# å¼€å§‹å‹ç¼©
+rm -rf  $ISO_IDR/live/filesystem.squashfs
 echo "making squashfs..."
-mksquashfs $ROOTFS $ISO_IDR/casper/filesystem.squashfs
+mksquashfs $ROOTFS $ISO_IDR/live/filesystem.squashfs
 
-# »ñÈ¡ÎÄ¼şÏµÍ³´óĞ¡£¬²¢´æ´¢ÔÚÅäÖÃÎÄ¼şÖĞ
-printf $(du -sx --block-size=1 $ROOTFS | cut -f1) > $ISO_IDR/casper/filesystem.size
-SIZE=`cat $ISO_IDR/casper/filesystem.size`
+# è·å–æ–‡ä»¶ç³»ç»Ÿå¤§å°ï¼Œå¹¶å­˜å‚¨åœ¨é…ç½®æ–‡ä»¶ä¸­
+printf $(du -sx --block-size=1 $ROOTFS | cut -f1) > $ISO_IDR/live/filesystem.size
+SIZE=`cat $ISO_IDR/live/filesystem.size`
 echo "we got fs size:"  $SIZE
 
-# ÖØĞÂÉú³Émd5
+# é‡æ–°ç”Ÿæˆmd5
 echo "making iso..."
 cd $ISO_IDR
 rm -rf md5sum.txt
 find -type f -print0 | xargs -0 md5sum | grep -v isolinux/boot.cat | tee md5sum.txt
 
-# ÖÆ×÷iso
-# ×¢£º-VÊÇ´ò±êÇ©µÄÒâË¼
+# åˆ¶ä½œiso
+# æ³¨ï¼š-Væ˜¯æ‰“æ ‡ç­¾çš„æ„æ€
 #mkisofs -D -r -V "lubuntu-KXS 16.04.3" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o ../$ISO_NAME .
 
-# ×¢£ºÊ¹ÓÃxorrisoÖÆ×÷µÄISO£¬ÓÃddÉÕĞ´µ½UÅÌ£¬²ÅÄÜÆô¶¯£¬ÓÃmkisofs²»³É¹¦¡£Ô­ÒòÎ´Öª
-# µ«ÊÇ£¬ÕâÁ½¸ö¹¤¾ßÖÆ×÷³öÀ´µÄISO£¬¾ù¿ÉÓÃvmwareÆô¶¯
-# ÕâÀïÒÔUÅÌÆô¶¯ÎªÑéÖ¤±ê×¼
+# æ³¨ï¼šä½¿ç”¨xorrisoåˆ¶ä½œçš„ISOï¼Œç”¨ddçƒ§å†™åˆ°Uç›˜ï¼Œæ‰èƒ½å¯åŠ¨ï¼Œç”¨mkisofsä¸æˆåŠŸã€‚åŸå› æœªçŸ¥
+# ä½†æ˜¯ï¼Œè¿™ä¸¤ä¸ªå·¥å…·åˆ¶ä½œå‡ºæ¥çš„ISOï¼Œå‡å¯ç”¨vmwareå¯åŠ¨
+# è¿™é‡Œä»¥Uç›˜å¯åŠ¨ä¸ºéªŒè¯æ ‡å‡†
 xorriso -as mkisofs \
   -v -R -J -joliet-long -input-charset utf8 \
   -publisher "KXS" -p "Late Lee" -V "lubuntu-KXS 16.04.3" \
@@ -70,4 +70,4 @@ xorriso -as mkisofs \
   -no-emul-boot  -isohybrid-gpt-basdat \
   -o $ISO_NAME .
 
-# <<<<<<<<<< ½áÊø
+# <<<<<<<<<< ç»“æŸ
